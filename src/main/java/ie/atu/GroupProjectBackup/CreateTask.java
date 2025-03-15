@@ -4,11 +4,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Properties;
 
-public class TestConnection {
-    public static void main(String[] args){
+public class CreateTask {
+    public static void main(String[] args) throws SQLException {
 
         Properties dbProps = new Properties();
         try(InputStream input = TestConnection.class.getResourceAsStream("/db.properties")){
@@ -26,11 +27,14 @@ public class TestConnection {
         String password = dbProps.getProperty("db.password");
 
         try(Connection con = DriverManager.getConnection(url, username, password)){
-            System.out.println("Connected");
-        } catch(SQLException e){
-            e.printStackTrace();
-            System.out.println("Could not Connect");
-        }
 
+            PreparedStatement stmt = con.prepareStatement("INSERT INTO dept(name) VALUES (?)");
+            stmt.setString(1, "ATU");
+            stmt.executeUpdate();
+
+        } catch(SQLException e){
+            System.out.println("Insert Failed");
+            e.printStackTrace();
+        }
     }
 }
